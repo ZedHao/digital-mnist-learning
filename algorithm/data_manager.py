@@ -2,7 +2,7 @@ import pandas as pd
 
 # read train & test data
 def read_data():
-    root_path = "digital_minist_data/"
+    root_path = "../digital_minist_data/"
     dataset = pd.read_csv(root_path + "train.csv")
     X_train = dataset.values[0:, 1:]
     y_train = dataset.values[0:, 0]
@@ -16,7 +16,8 @@ def read_data():
 # handler grid result
 def sorted_grid_scores(gridScores):
     def sort_by_mean(val):
-        return val.mean_validation_score
+        return val['mean_test_score']
+
 
     sorted_scores = sorted(gridScores,
                            key=sort_by_mean,
@@ -38,8 +39,9 @@ grid_scores_ : list of named tuples
 """
 def print_grid_mean(gridScores, sorted=True):
     print("\ngrid_scores_:")
-    print("mean score | scores.std() * 2 | params")   
- 
+    print("mean score | scores.std() * 2 | params")
+    import pdb
+    pdb.set_trace()
     sorted_scores = gridScores
     if sorted:
         sorted_scores = sorted_grid_scores(gridScores)
@@ -47,4 +49,28 @@ def print_grid_mean(gridScores, sorted=True):
     for params, mean_score, scores in sorted_scores:
         print("%0.3f      | (+/-%0.03f)       | %r" % (mean_score, scores.std() * 2, params))
     print()
-    
+
+
+"""
+Print grid result
+
+----------
+grid_scores_ : list of named tuples
+
+  * ``parameters``, a dict of parameter settings
+  * ``mean_validation_score``, the mean score over the cross-validation folds
+  * ``cv_validation_scores``, the list of scores for each fold
+
+"""
+def print_grid_mean_new(gridScores, sorted=True):
+    print("\ngrid_scores_:")
+    print("mean score | scores.std() * 2 | params")
+    import pdb
+    pdb.set_trace()
+    sorted_scores = gridScores
+    if sorted:
+        sorted_scores = sorted_grid_scores(gridScores)
+
+    for params, mean_score, scores in sorted_scores:
+        print("%0.3f      | (+/-%0.03f)       | %r" % (mean_score, scores.std() * 2, params))
+    print()

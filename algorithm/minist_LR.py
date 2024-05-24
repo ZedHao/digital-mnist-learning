@@ -3,15 +3,16 @@ import pandas as pd
 import numpy as np
 import time
 from sklearn.linear_model import LogisticRegression
-from sklearn.grid_search import GridSearchCV
+from sklearn.model_selection import GridSearchCV
 from data_manager import *
+import pdb
 
 # read_data()
 X_train_small, y_train_small, X_test = read_data()
 
 # LR
 # begin time
-start = time.clock()
+start = int(time.time())
 # progressing
 """
 lbfgs + l2
@@ -40,7 +41,7 @@ mean score | scores.std() * 2 | params
 liblinear + l1
 """
 parameters = {'penalty': ['l1'], 'C': [2e0, 2e1, 2e2]}
-lr_clf=LogisticRegression(penalty='l1', multi_class='ovr', max_iter=800,  C=4 )
+lr_clf=LogisticRegression(penalty='l1', multi_class='ovr', max_iter=800,  C=4, solver='liblinear' )
 """
 结果：(样本数为1000)
 grid_scores_:
@@ -57,9 +58,13 @@ mean score | scores.std() * 2 | params
 """
 
 gs_clf = GridSearchCV(lr_clf, parameters, n_jobs=1, verbose=True)
+
 gs_clf.fit(X_train_small.astype('float')/256, y_train_small)
-print_grid_mean(gs_clf.grid_scores_)
+
+print_grid_mean(gs_clf.cv_results_, False)
 
 # end time
-elapsed = (time.clock() - start)
-print("Time used:", elapsed)
+elapsed = (int(time.time()) - start)
+if __name__ == '__main__':
+
+    print("Time used:", elapsed)
