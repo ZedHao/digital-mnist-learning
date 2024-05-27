@@ -39,9 +39,19 @@ mean score | scores.std() * 2 | params
 
 """
 liblinear + l1
+L1正则化 
+
 """
-parameters = {'penalty': ['l1'], 'C': [2e0, 2e1, 2e2]}
-lr_clf=LogisticRegression(penalty='l1', multi_class='ovr', max_iter=800,  C=4, solver='liblinear' )
+
+parameters = {'penalty': ['l1','l2'], 'C': [2e0, 2e1, 2e2,2e3]}
+lr_clf= LogisticRegression(penalty='l1', multi_class='ovr', max_iter=800,  C=4, solver='liblinear' )
+gs_clf = GridSearchCV(lr_clf, parameters, n_jobs=1, verbose=True)
+
+gs_clf.fit(X_train_small.astype('float')/256, y_train_small)
+
+
+# end time
+elapsed = (int(time.time()) - start)
 """
 结果：(样本数为1000)
 grid_scores_:
@@ -57,14 +67,15 @@ mean score | scores.std() * 2 | params
 
 """
 
-gs_clf = GridSearchCV(lr_clf, parameters, n_jobs=1, verbose=True)
 
-gs_clf.fit(X_train_small.astype('float')/256, y_train_small)
-
-print_grid_mean(gs_clf.cv_results_, False)
-
-# end time
-elapsed = (int(time.time()) - start)
 if __name__ == '__main__':
+    # 最好的参数
+    print(gs_clf.best_params_)
+    # 最高的得分
+    print(gs_clf.best_score_)
+    # 打印最好的模型
+    print(gs_clf.best_estimator_)
 
+    # 打印各项参数
+    print_grid_mean(gs_clf.cv_results_)
     print("Time used:", elapsed)
