@@ -1,10 +1,11 @@
-
+import learn as learn
 import pandas as pd
 import numpy as np
 import time
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 from data_manager import *
+from joblib import dump, load
 import pdb
 
 # read_data()
@@ -21,30 +22,15 @@ lbfgs + l2
 # lr_clf = LogisticRegression(
 #     penalty='l2', solver='lbfgs', multi_class='multinomial', max_iter=800,  C=0.2)
 
-"""
-结果：(样本数为1000)
-grid_scores_:
-mean score | scores.std() * 2 | params
-0.850      | (+/-0.036)       | {'C': 0.12, 'penalty': 'l2'}
-0.848      | (+/-0.034)       | {'C': 0.08, 'penalty': 'l2'}
-0.848      | (+/-0.034)       | {'C': 0.2, 'penalty': 'l2'}
-0.844      | (+/-0.045)       | {'C': 0.04, 'penalty': 'l2'}
-0.839      | (+/-0.055)       | {'C': 0.02, 'penalty': 'l2'}
-
-结论：
-1. 整理来看，无太大差异，相对来说，C 的取值 0.12 表现稍微好一点
-2. 1000的样本数太少，仅供参考
-"""
 
 
-"""
-liblinear + l1
-L1正则化 
 
-"""
 
-parameters = {'penalty': ['l1','l2'], 'C': [2e0, 2e1, 2e2,2e3]}
-lr_clf= LogisticRegression(penalty='l1', multi_class='ovr', max_iter=800,  C=4, solver='liblinear' )
+#parameters = {'penalty': ['l1'], 'C': [2e0, 2e1, 2e2]}
+#lr_clf= LogisticRegression(penalty='l1', multi_class='ovr', max_iter=800, solver='liblinear' )
+parameters = {'penalty': ['l2'], 'C': [2e-2, 4e-2, 8e-2, 12e-2, 2e-1]}
+lr_clf = LogisticRegression(
+   penalty='l2', solver='lbfgs', multi_class='multinomial', max_iter=800,  C=0.2)
 gs_clf = GridSearchCV(lr_clf, parameters, n_jobs=1, verbose=True)
 
 gs_clf.fit(X_train_small.astype('float')/256, y_train_small)
@@ -52,30 +38,19 @@ gs_clf.fit(X_train_small.astype('float')/256, y_train_small)
 
 # end time
 elapsed = (int(time.time()) - start)
-"""
-结果：(样本数为1000)
-grid_scores_:
-mean score | scores.std() * 2 | params
-0.826      | (+/-0.035)       | {'C': 2.0, 'penalty': 'l1'}
-0.820      | (+/-0.050)       | {'C': 200.0, 'penalty': 'l1'}
-0.819      | (+/-0.031)       | {'C': 20.0, 'penalty': 'l1'}
 
-结论： 
-1. C越大，均方差越大
-2. 不同的 C 对 mean score 差异不大
-3. 1000的样本数太少，仅供参考
-
-"""
 
 
 if __name__ == '__main__':
     # 最好的参数
-    print(gs_clf.best_params_)
+    print("best_params_:---", gs_clf.best_params_)
     # 最高的得分
-    print(gs_clf.best_score_)
+    print("best_score_:---",gs_clf.best_score_)
     # 打印最好的模型
-    print(gs_clf.best_estimator_)
-
+    print("gs_clf.best_estimator_", gs_clf.best_estimator_)
     # 打印各项参数
     print_grid_mean(gs_clf.cv_results_)
     print("Time used:", elapsed)
+   # 保存模型
+    dump(gs_clf, 'saved_model/lr.pkl')
+    #load model

@@ -28,9 +28,10 @@ def sorted_grid_scores(gridScores):
 
 
 
-example= {
+lrExample= {
     "scoring": None,  # 评分标准，用于评估模型性能的指标。在此处为None，表示未指定特定的评分标准。
-    "estimator": "LogisticRegression(C=4, max_iter=800, multi_class='ovr', penalty='l1', solver='liblinear')",  # 使用的模型估计器，这里是一个逻辑回归模型的字符串表示，包括模型的参数设置。
+    # 使用的模型估计器，这里是一个逻辑回归模型的字符串表示，包括模型的参数设置。
+    "estimator": "LogisticRegression(C=4, max_iter=800, multi_class='ovr', penalty='l1', solver='liblinear')",
     "n_jobs": 1,  # 并行执行的作业数，用于加速计算。
     "refit": True,  # 是否在找到最佳参数后重新拟合整个数据集。
     "cv": None,  # 交叉验证的折数，用于模型评估的数据划分。
@@ -39,7 +40,9 @@ example= {
     "error_score": "nan",  # 如果拟合过程中发生错误，用于替代分数的值。
     "return_train_score": False,  # 是否返回训练分数，此处为False，表示不返回训练分数。
     "param_grid": {
-                      "penalty": ["l1", "l2"],  # 待搜索的参数空间，包括正则化惩罚项。
+        # 待搜索的参数空间，包括正则化惩罚项。
+        # 理解这里的l1 l2
+       "penalty": ["l1", "l2"],
     "C": [2.0, 20.0, 200.0, 2000.0]  # 正则化强度。
     },
     "multimetric_": False,  # 是否使用多个指标进行评分。
@@ -75,15 +78,13 @@ example= {
             "split2_test_score": [0.83, 0.85, 0.83, 0.85, 0.835, 0.835, 0.84, 0.83],  # 第 3 折的测试分数
             "split3_test_score": [0.845, 0.855, 0.805, 0.855, 0.825, 0.85, 0.83, 0.845],  # 第 4 折的测试分数
             "split4_test_score": [0.87, 0.88, 0.87, 0.88, 0.86, 0.87, 0.865, 0.87],  # 第 5 折的测试分数
+            # 口径 每组超参数组合在交叉验证中的平均测试分数。
             "mean_test_score": [0.833, 0.846, 0.82, 0.841, 0.82, 0.83, 0.824, 0.825],  # 平均测试分数
+            # 每组超参数组合在交叉验证中测试分数的标准差 减去平均 平方开方
             "std_test_score": [0.02767671, 0.02437212, 0.02983287, 0.03006659, 0.02720294, 0.03361547, 0.02817801, 0.03507136],  # 测试分数的标准差
             "rank_test_score": [3, 1, 8, 2, 7, 4, 6, 5]  # 测试分数的排名
             },
-
-
             "n_splits_": 5 # 执行交叉验证时使用的折数。
-
-
 }
 def print_grid_mean(gridScores, sorted=True):
     # 可以看下上面的例子
