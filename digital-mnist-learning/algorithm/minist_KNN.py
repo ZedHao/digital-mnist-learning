@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import time
 from sklearn.model_selection import cross_val_score
-from sklearn.grid_search import GridSearchCV
+from sklearn.model_selection import GridSearchCV
 from data_manager import *
 
 # read_data()

@@ -1,6 +1,6 @@
 import xgboost as xgb
 import time
-from sklearn.grid_search import GridSearchCV
+from sklearn.model_selection import GridSearchCV
 from data_manager import *
 
 # read_data()

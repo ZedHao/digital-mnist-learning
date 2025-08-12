@@ -1,6 +1,6 @@
 
 import time
-from sklearn.grid_search import GridSearchCV
+from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVC, NuSVC, SVR
 from data_manager import *
 
