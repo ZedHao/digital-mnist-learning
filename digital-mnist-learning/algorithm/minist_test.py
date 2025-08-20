@@ -5,17 +5,19 @@ import numpy as np
 from PIL import Image
 import os
 import re
-
-
+import pdb
 def preprocess_image(image_path):
     # 读取图像并将其转换为灰度图像
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    if image is None:
+        raise ValueError(f"无法读取图像：{image_path}（路径错误或文件损坏）")
 
     # 对图像进行阈值处理，将其转换为二值图像
     _, binary_image = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY_INV)
 
     # 找到图像的边界框
     contours, _ = cv2.findContours(binary_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    pdb.set_trace()
     x, y, w, h = cv2.boundingRect(contours[0])
 
     # 将图像调整为MNIST数据集中的标准尺寸（28x28像素）
@@ -30,9 +32,6 @@ def preprocess_image(image_path):
 
     return mnist_format_image
 
-# 示例：将图像转换为MNIST格式
-image_path = "image/num6.png"
-mnist_image = preprocess_image(image_path)
 
 def preprocess_image_v2(image_path):
 
@@ -62,18 +61,21 @@ def preprocess_image_v2(image_path):
 
 
 
-def extract_numbers_from_image_filenames(folder_path):
+def extract_numbers_from_image_filenames(folder_path, pkl_path):
     # 初始化一个空列表，用于存储提取出的数字
     numbers = []
-
-    # 遍历文件夹中的所有文件
+    if not os.path.exists(folder_path):
+        raise NotADirectoryError(f"文件夹不存在：{folder_path}")
+    if not os.path.isdir(folder_path):
+        raise NotADirectoryError(f"{folder_path} 不是一个文件夹")
     for filename in os.listdir(folder_path):
+
         # 检查文件是否以 "num" 开头并且以 ".png" 结尾
         if filename.startswith("num") and filename.endswith(".png"):
             # 使用正则表达式从文件名中提取数字部分
             number = re.findall(r'\d+', filename)
             if number:  # 确保找到了数字
-                check_data("image/num{idx}.png".format(idx=number[0]))
+                check_data("./algorithm/image/num{idx}.png".format(idx=number[0]), pkl_path)
 
     return numbers
 
@@ -82,16 +84,16 @@ def extract_numbers_from_image_filenames(folder_path):
 
 
 
-def check_data(file_name):
+def check_data(file_name,pkl_path):
     # 示例：将图像转换为MNIST格式
     image_path = file_name
     mnist_image = preprocess_image_v2(image_path)
 
-    loaded_model = load( 'saved_model/lr.pkl')
+    loaded_model = load( pkl_path)
     # 使用加载后的模型进行预测
     predictions = loaded_model.predict(mnist_image)
     print(file_name, "fileName---Predicted Digit:", predictions[0])
 
 
 if __name__ == '__main__':
-    extract_numbers_from_image_filenames("image")
+    extract_numbers_from_image_filenames("./algorithm/image","./algorithm/saved_model/lr.pkl")
